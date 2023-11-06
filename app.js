@@ -6,7 +6,7 @@ app.get('/', (req,res)=> {
 
     console.log('Peticion Recibida')
 
-    res.send('<h1>Hola mundo</h1>')
+    res.send('<h1>Nueva Aplicacion de clima laboral</h1>')
 })
 
 
