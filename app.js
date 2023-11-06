@@ -1,19 +1,48 @@
-require('dotenv').config()
 const express = require('express')
+const { default: mongoose } = require('mongoose')
+const path = require('path')
+require('dotenv').config()
 
 const app = express()
 
-app.get('/', (req,res)=> {
 
-    console.log('Peticion Recibida')
 
-    res.send('<h1>Nueva Aplicacion de clima laboral</h1>')
+mongoose.connect(`mongodb+srv://ehigueraa:${process.env.MONGO_DB_PASS}@cluster0.qhfo0ut.mongodb.net/clima-app?retryWrites=true&w=majority`
+)
+.then(result => {
+    app.listen(PORT,()=> {
+
+        console.log(`Servidor escuchando en el puerto ${PORT}`);
+    
+    })
+    console.log('Conexion Exitosa')
+    })
+.catch((err) => console.log(err))
+
+const climaSchema = mongoose.Schema({
+    rest:{type : String, require: true},
+},
+{timestamps: true}
+)
+
+const Coment  = mongoose.model('Clima',climaSchema,'mensajes.clima')
+
+app.use(express.json())
+
+app.post('/api/v1/clima', (req,res,next)=> {
+    const newComent = new Coment({
+        rest:req.body.rest
+    })
+
+    newComent
+    .save()
+    .then(result =>{
+      res.status(201).json({ok:true})
+    })
+    .catch((err) => console.log(err))
 })
 
-const PORT = process.env.PORT || 4000
+app.use(express.static(path.join(__dirname, 'public')))
 
-app.listen(PORT,()=> {
+const PORT = process.env.PORT 
 
-    console.log(`Servidor escuchando en el puerto ${PORT}`);
-
-})
